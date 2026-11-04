@@ -1,0 +1,133 @@
+% UGD official beamer style (taken from the Сметководствена Супер Лига 2026 deck). Colours follow ef.ugd.edu.mk.
+% Use: \documentclass[aspectratio=169,12pt]{beamer} then \usepackage{ugd-official-beamer}. See template.tex (general) and template-event.tex (events). Compile with xelatex, twice (TikZ positions).
+\ProvidesPackage{ugd-official-beamer}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{macedonian}
+\setotherlanguages{english}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+% Carlito and Liberation Sans (SIL Open Font License), kept in fonts/
+\setmainfont[Path=fonts/,Extension=.ttf,UprightFont=Carlito-Regular,BoldFont=Carlito-Bold,ItalicFont=Carlito-Italic,BoldItalicFont=Carlito-BoldItalic]{Carlito}
+\setsansfont[Path=fonts/,Extension=.ttf,UprightFont=Carlito-Regular,BoldFont=Carlito-Bold,ItalicFont=Carlito-Italic,BoldItalicFont=Carlito-BoldItalic]{Carlito}
+\newfontfamily\cyrillicfont[Ligatures=TeX,Path=fonts/,Extension=.ttf,UprightFont=Carlito-Regular,BoldFont=Carlito-Bold,ItalicFont=Carlito-Italic,BoldItalicFont=Carlito-BoldItalic]{Carlito}
+\newfontfamily\cyrillicfontsf[Ligatures=TeX,Path=fonts/,Extension=.ttf,UprightFont=Carlito-Regular,BoldFont=Carlito-Bold,ItalicFont=Carlito-Italic,BoldItalicFont=Carlito-BoldItalic]{Carlito}
+\newfontfamily\ugdheadfont[Path=fonts/,Extension=.ttf,UprightFont=LiberationSans-Regular,BoldFont=LiberationSans-Bold]{LiberationSans}
+
+\definecolor{ugdred}{HTML}{D71920}
+\definecolor{ugddark}{HTML}{231F20}
+\definecolor{ugdgrey}{HTML}{58595B}
+\definecolor{ugdtint}{HTML}{F5F5F5}
+\definecolor{ugdline}{HTML}{E9E9E9}
+\definecolor{ugdorange}{HTML}{FFAA55}
+
+\frenchspacing
+% No word splitting in titles and cards
+\AtBeginDocument{\hyphenpenalty=10000}
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=0.72cm,text margin right=0.72cm}
+\setbeamercolor{normal text}{fg=ugddark}
+\setbeamercolor{alerted text}{fg=ugdred}
+\setbeamercolor{structure}{fg=ugdred}
+\setbeamercolor{block title}{bg=ugdred,fg=white}
+\setbeamercolor{block body}{bg=ugdtint,fg=ugddark}
+\setbeamertemplate{blocks}[rounded]
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamercolor{section in toc}{fg=ugddark}
+
+% All coordinates are cm from the top left of the slide (16 x 9 cm)
+\tikzset{
+  ugdpage/.style={remember picture,overlay,shift={(current page.north west)}},
+  ugdcard/.style={rounded corners=2.5mm,anchor=north west,inner sep=0pt},
+  ugdtxt/.style={anchor=north west,inner sep=0pt,align=left,text=ugddark},
+}
+
+% Slide chrome: title, stamp, footer and slide number
+\setbeamertemplate{frametitle}{%
+  \begin{tikzpicture}[ugdpage]
+    \node[ugdtxt,font=\ugdheadfont\bfseries\fontsize{17}{20}\selectfont,text width=11.8cm,anchor=west] at (0.72,-0.99) {\insertframetitle};
+  \end{tikzpicture}%
+  \par\vskip1.5cm}
+\setbeamertemplate{headline}{%
+  \begin{tikzpicture}[ugdpage]
+    \node[anchor=north east,inner sep=0pt] at (15.28,-0.5) {\includegraphics[width=2.4cm]{ugd-official-logo.png}};
+  \end{tikzpicture}}
+\setbeamertemplate{footline}{%
+  \begin{tikzpicture}[ugdpage]
+    \node[ugdtxt,text=ugdgrey,font=\fontsize{6.5}{8}\selectfont] at (0.72,-8.34) {\insertshorttitle \ | \ \insertshortdate};
+    \node[anchor=north east,inner sep=0pt,text=ugdgrey,font=\fontsize{6.5}{8}\selectfont] at (15.28,-8.34) {\insertframenumber};
+  \end{tikzpicture}%
+  \vskip0.9cm}
+
+% Red slide: badge, title and building; #2 is extra TikZ
+\newcommand{\ugdredpage}[2]{%
+  \begin{tikzpicture}[ugdpage]
+    \fill[ugdred] (0,0) rectangle (current page.south east);
+    \node[ugdtxt] at (0.72,-0.54) {\includegraphics[width=3.48cm]{ugd-official-badge.png}};
+    \node[ugdtxt,text=white,font=\ugdheadfont\bfseries\fontsize{24}{28}\selectfont,text width=7.9cm] at (0.72,-2.52) {#1};
+    \node[ugdtxt] at (9.24,-1.62) {\includegraphics[width=6.04cm]{ugd-official-building.png}};
+    #2
+  \end{tikzpicture}}
+
+% \title = title, \subtitle = orange tagline, \author = optional, \date[footer date]{date}, \institute = line under the date
+\newif\ifugdhasauthor
+\setbeamertemplate{title page}{%
+  \setbox0\vbox{\hsize=7.9cm\insertauthor\par}%
+  \ifdim\ht0>0pt \ugdhasauthortrue\else\ugdhasauthorfalse\fi
+  \ugdredpage{\inserttitle}{
+    \node[ugdtxt,text=ugdorange,font=\itshape\large,text width=7.9cm] at (0.72,-5.28) {\insertsubtitle};
+    \ifugdhasauthor
+      \node[ugdtxt,text=white,font=\small\bfseries,text width=7.9cm] at (0.72,-5.92) {\insertauthor};
+      \node[ugdtxt,text=white,font=\small,text width=7.9cm] at (0.72,-6.96) {\insertdate\\\insertinstitute};
+    \else
+      \node[ugdtxt,text=white,font=\small,text width=7.9cm] at (0.72,-6.48) {\textbf{\insertdate}\\\insertinstitute};
+    \fi
+  }}
+
+% \UgdClosingFrame{title}{tagline}
+\newcommand{\UgdClosingFrame}[2]{%
+  \begin{frame}[plain]
+    \ugdredpage{#1}{
+      \node[ugdtxt,text=ugdorange,font=\itshape\large,text width=7.9cm] at (0.72,-5.28) {#2};
+    }
+  \end{frame}}
+
+% \UgdFrame{title}{TikZ, placed with the blocks below}. For bullets and blocks use a normal frame with \frametitle.
+\newcommand{\UgdFrame}[2]{%
+  \begin{frame}
+    \frametitle{#1}
+    \begin{tikzpicture}[ugdpage]
+      #2
+    \end{tikzpicture}
+  \end{frame}}
+
+% \UgdCard{x}{y}{width}{height}{colour}
+\newcommand{\UgdCard}[5]{\node[ugdcard,fill=#5,minimum width=#3cm,minimum height=#4cm] at (#1,-#2) {};}
+
+% \UgdAvatar{x}{y}{diameter}{photo file}{initials}: the photo in a circle, or the initials on red if the file is missing
+\newcommand{\UgdAvatar}[5]{%
+  \IfFileExists{#4}{%
+    \begin{scope}
+      \clip (#1+#3/2,-#2-#3/2) circle (#3cm/2);
+      \node[anchor=north west,inner sep=0pt] at (#1,-#2) {\includegraphics[width=#3cm]{#4}};
+    \end{scope}%
+  }{%
+    \pgfmathsetmacro{\ugdinitsize}{9.33*#3}%
+    \fill[ugdred] (#1+#3/2,-#2-#3/2) circle (#3cm/2);
+    \node[text=white,text height=0.72em,text depth=0pt,inner sep=0pt,font=\ugdheadfont\bfseries\fontsize{\ugdinitsize}{\ugdinitsize}\selectfont] at (#1+#3/2,-#2-#3/2) {#5};%
+  }}
+
+% \UgdDisc{x}{y}{diameter}{fill}{text colour}{label}: a small numbered circle
+\newcommand{\UgdDisc}[6]{%
+  \fill[#4] (#1+#3/2,-#2-#3/2) circle (#3cm/2);
+  \node[text=#5,font=\bfseries\small] at (#1+#3/2,-#2-#3/2) {#6};}
+
+% \UgdPersonCard{x}{width}{name size in pt}{photo file}{initials}{name}{role}: the role may be empty
+\newcommand{\UgdPersonCard}[7]{%
+  \UgdCard{#1}{1.98}{#2}{5.4}{ugdtint}
+  \UgdAvatar{#1+#2/2-1.5}{2.28}{3}{#4}{#5}
+  \pgfmathsetmacro{\ugdnameline}{#3*1.25}
+  \node[anchor=north,inner sep=0pt,align=center,text width=#2cm-0.1cm] at (#1+#2/2,-5.52) {{\fontsize{#3}{\ugdnameline}\selectfont\bfseries #6}\\[2pt]{\small\color{ugdgrey}#7}};}
